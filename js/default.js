@@ -1,5 +1,9 @@
  var windowWidth = window.innerWidth, windowHeight = window.innerHeight;
  var camera,renderer,scene;
+ var mesh1, mesh2;
+ var newMeshReady = false;
+ var sizeMesh1 = 25;
+ var sizeMesh2 = 30;
  Init();
  animate();
 
@@ -23,8 +27,7 @@ function Init(){
  		document.body.appendChild( renderer.domElement );
   
        //add object to Scene
-      var graph = new THREE.Mesh(new THREE.SphereGeometry(8, 30, 10), new THREE.MeshLambertMaterial({color:0xffffff}));
-	  scene.add(graph);
+        readSTLs('resource/2014-09-05-Chanel-logo-extruded.stl', 'resource/2014-09-05-Chanel-name-extruded.stl');
   
         //add Light
  		var xl = new THREE.DirectionalLight( 0x555555 );
@@ -44,3 +47,44 @@ function Init(){
     renderer.setClearColor(new THREE.Color().setRGB(1.0, 1.0, 1.0)); 
 	renderer.Leia_render(scene, camera,undefined,undefined,_holoScreenScale,_camFov,_messageFlag);
  }
+function readSTLs(filename1, filename2) 
+{
+	var xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function () {
+	if ( xhr.readyState == 4 ) {
+		if ( xhr.status == 200 || xhr.status == 0 ) {
+			var rep = xhr.response; // || xhr.mozResponseArrayBuffer;
+			mesh1 = parseStlBinary(rep);
+			mesh1.scale.set(sizeMesh1, sizeMesh1, sizeMesh1);
+			scene.add(mesh1);
+			newMeshReady = true;
+			}
+		}
+	};
+	xhr.onerror = function(e) {
+		console.log(e);
+	};
+	xhr.open( "GET", filename1, true );
+	xhr.responseType = "arraybuffer";
+	xhr.send( null );
+	
+
+	var xhr2 = new XMLHttpRequest();
+	xhr2.onreadystatechange = function () {
+	if ( xhr2.readyState == 4 ) {
+		if ( xhr2.status == 200 || xhr.status == 0 ) {
+			var rep = xhr2.response;
+			mesh2 = parseStlBinary(rep);
+			mesh2.scale.set(sizeMesh2, sizeMesh2, sizeMesh2);
+			scene.add(mesh2);
+			newMeshReady = true;
+			}
+		}
+	};
+	xhr2.onerror = function(e) {
+		console.log(e);
+	};
+	xhr2.open( "GET", filename2, true );
+	xhr2.responseType = "arraybuffer";
+	xhr2.send( null );
+}

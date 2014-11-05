@@ -27,6 +27,16 @@ function Init(){
  		document.body.appendChild( renderer.domElement );
   
        //add object to Scene
+        var bgpic = "resource/curvedclosetwall.jpg";
+        var backgroundPlaneTexture = new THREE.ImageUtils.loadTexture( bgpic );
+          backgroundPlaneTexture.wrapS = backgroundPlaneTexture.wrapT = THREE.RepeatWrapping; 
+        backgroundPlaneTexture.repeat.set( 1, 1 );
+        var backgroundPlaneMaterial = new THREE.MeshLambertMaterial( { map: backgroundPlaneTexture, side:       THREE.DoubleSide } );
+        var backgroundPlaneGeometry;
+          backgroundPlaneGeometry = new THREE.PlaneGeometry(40, 30, 10, 10);
+          backgroundPlane = new THREE.Mesh(backgroundPlaneGeometry, backgroundPlaneMaterial);
+          backgroundPlane.position.z = -8;
+          scene.add(backgroundPlane);
         readSTLs('resource/2014-09-05-Chanel-logo-extruded.stl', 'resource/2014-09-05-Chanel-name-extruded.stl');
   
         //add Light
@@ -43,7 +53,11 @@ function Init(){
  function animate() 
  {
  	requestAnimationFrame( animate );
-  
+    if (newMeshReady) {
+		mesh1.position.set(0, 0, 3); 
+		mesh2.position.set(0, 0, -3); 
+		mesh1.rotation.y = 1.032*Date.now() * 0.001;
+	}
     renderer.setClearColor(new THREE.Color().setRGB(1.0, 1.0, 1.0)); 
 	renderer.Leia_render(scene, camera,undefined,undefined,_holoScreenScale,_camFov,_messageFlag);
  }
